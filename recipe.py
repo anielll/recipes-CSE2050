@@ -41,10 +41,10 @@ class Recipe:
         if not path.exists("./images"):
             makedirs("./images")
         try:
-            image= request.urlopen(self.image_url).read()
             if(path.exists("./images/"+self.image_filename)):
                 return
             with open('./images/'+self.image_filename,'wb') as image_out:
+                image= request.urlopen(self.image_url).read()
                 image_out.write(image)
         except Exception as e:
             self.image_filename = None
