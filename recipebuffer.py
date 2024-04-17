@@ -35,19 +35,19 @@ class RecipeBuffer: #FINAlish implementation
         if(new_index>=len(self.data)):
             raise IndexError("RecipeBuffer has no next")
         self.buffer_index = new_index
-        return self.get_current()
+        return self.current()
     def previous(self):
         new_index = self.buffer_index - self.buffer_size
         if(new_index<0):
             raise IndexError("RecipeBuffer has no previous")
         self.buffer_index = new_index
-        return self.get_current()
+        return self.current()
     def first(self):
         self.buffer_index = 0
-        return self.get_current()
+        return self.current()
     def last(self):
         self.buffer_index = len(self.data) - (len(self.data)%self.buffer_size)
-        return self.get_current()
+        return self.current()
     def has_next(self):
         return((self.buffer_index+self.buffer_size) < len(self.data))
     def has_previous(self):
