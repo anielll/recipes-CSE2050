@@ -25,61 +25,68 @@ class RecipeUI(QDialog):
         self._first_button = QPushButton("First")
         self._last_button = QPushButton("Last")
 
-        self.setup_window()
-    
-    def setup_window(self):
+        #following code creates all the buttons and assigns 
+        #them to execute the right methods
+        self._search_button.clicked.connect(self.search)
+        self._reset_button.clicked.connect(self.reset)
+        self._previous_button.clicked.connect(self.previous)
+        self._first_button.clicked.connect(self.first)
+        self._last_button.clicked.connect(self.last)
+        self._next_button.clicked.connect(self.next)
+        
+        self.grid = QGridLayout()
+        self.setLayout(self.grid)
         self.setGeometry(100, 100, self._width, self._height)
         self.setWindowTitle("Recipe Viewer")
         self.layout_ui(self._master_buffer.current())
 
     def layout_ui(self, recipes):
-        #sets grid layout
-        grid = QGridLayout()
-
-        #following code creates all the buttons and assigns 
-        #them to execute the right methods
-        grid.addWidget(self._search_bar, 0, 0, 1, 80)
-
-        self._search_button.clicked.connect(self.search)
-        grid.addWidget(self._search_button, 0, 80, 1, 10)
-
-        self._reset_button.clicked.connect(self.reset)
-        grid.addWidget(self._reset_button, 0, 90, 1, 10)
-
-        self._previous_button.clicked.connect(self.previous)
-        grid.addWidget(self._previous_button, 80, 70, 1, 10)
-
-        self._first_button.clicked.connect(self.first)
-        grid.addWidget(self._first_button, 80, 80, 1, 5)
-
-        self._last_button.clicked.connect(self.last)
-        grid.addWidget(self._last_button, 80, 85, 1, 5)
-
-        self._next_button.clicked.connect(self.next)
-        grid.addWidget(self._next_button, 80, 90, 1, 10)
-
+        items = [self.grid.itemAt(i) for i in range(self.grid.count())]
+        for item in items:
+            self.grid.removeWidget(item.widget())
+        items = [self.grid.itemAt(i) for i in range(self.grid.count())]
+        for item in items:
+            print(type(item))
+        
+        self.grid.addWidget(self._search_bar, 0, 0, 1, 80)
+        self.grid.addWidget(self._search_button, 0, 80, 1, 10)
+        if(self._current_buffer!=self._master_buffer):
+            self.grid.addWidget(self._reset_button, 0, 90, 1, 10)
+            self._reset_button.show()
+        else:
+            self._reset_button.hide()
+        if(self._current_buffer.has_previous()):
+            self.grid.addWidget(self._previous_button, 80, 70, 1, 10)
+            self._previous_button.show()
+        else:
+            self._previous_button.hide()
+        if(self._current_buffer.has_next()):
+            self.grid.addWidget(self._next_button, 80, 90, 1, 10)
+            self._next_button.show()
+        else:
+            self._next_button.hide()
+        self.grid.addWidget(self._first_button, 80, 80, 1, 5)
+        self.grid.addWidget(self._last_button, 80, 85, 1, 5)
         for index, recipe in enumerate(recipes):
             if (index < 4):
-                grid.addWidget(QPushButton("IMAGE"), 1, 2 + (index*25), 20, 20)
-                grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 2, 2 + (index*25), 21, 20)
-                grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 3, 2 + (index*25), 22, 20)
-                grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 4, 2 + (index*25), 23, 20)
-                grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 5, 2 + (index*25), 24, 20)
-                grid.addWidget(QPushButton("View Recipe"), 6, 12 + (index*25), 25, 10)
+                self.grid.addWidget(QPushButton("IMAGE"), 1, 2 + (index*25), 20, 20)
+                self.grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 2, 2 + (index*25), 21, 20)
+                self.grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 3, 2 + (index*25), 22, 20)
+                self.grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 4, 2 + (index*25), 23, 20)
+                self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 5, 2 + (index*25), 24, 20)
+                self.grid.addWidget(QPushButton("View Recipe"), 6, 12 + (index*25), 25, 10)
             else:
-                grid.addWidget(QPushButton("IMAGE"), 7, 2 + ((index-4)*25), 60, 20)
-                grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 8, 2 + ((index-4)*25), 61, 20)
-                grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 9, 2 + ((index-4)*25), 62, 20)
-                grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 10, 2 + ((index-4)*25), 63, 20)
-                grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 11, 2 + ((index-4)*25), 64, 20)
-                grid.addWidget(QPushButton("View Recipe"), 12, 12 + ((index-4)*25), 65, 10)
+                self.grid.addWidget(QPushButton("IMAGE"), 7, 2 + ((index-4)*25), 60, 20)
+                self.grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 8, 2 + ((index-4)*25), 61, 20)
+                self.grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 9, 2 + ((index-4)*25), 62, 20)
+                self.grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 10, 2 + ((index-4)*25), 63, 20)
+                self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 11, 2 + ((index-4)*25), 64, 20)
+                self.grid.addWidget(QPushButton("View Recipe"), 12, 12 + ((index-4)*25), 65, 10)
 
         low_index = self._current_buffer.buffer_index + 1
         high_index = low_index + self._current_buffer.buffer_size -1
 
-        grid.addWidget(QLabel(f"Displaying {low_index}-{high_index} of {len(self._current_buffer.data)} Recipes"), 100, 0, 1, 10)
-
-        self.setLayout(grid)
+        self.grid.addWidget(QLabel(f"Displaying {low_index}-{high_index} of {len(self._current_buffer.data)} Recipes"), 100, 0, 1, 10)
 
     def search(self):
         bar_text = self._search_bar.text()
@@ -99,8 +106,8 @@ class RecipeUI(QDialog):
         if (len(new_recipe_list_search) == 0):
             self._current_buffer = self._master_buffer
         else:
-            self._current_buffer = RecipeBuffer(new_recipe_list_search)
-
+            self._current_buffer = RecipeBuffer(new_recipe_list_search,8)
+            self.layout_ui(self._current_buffer.current())
     def next(self):
         self.layout_ui(self._current_buffer.next())
 
@@ -116,3 +123,4 @@ class RecipeUI(QDialog):
     def reset(self):
         self._current_buffer = self._master_buffer
         self.layout_ui(self._current_buffer.first())
+
