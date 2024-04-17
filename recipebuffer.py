@@ -5,13 +5,20 @@ import time
 # which prevents doing unnecessary work for unused objects (and allows progress bar to be useful)
 # this function is just a prototype; TODO: implement correctly
 def initialize_all(recipe_array, bar_length = 50):
+    skip_init = True
+    for r in recipe_array:
+        if (not r.initialized):
+            skip_init = False
+            break
+    if(skip_init):
+        return
     progress_max = len(recipe_array)
     for i, r in enumerate(recipe_array):
         percent = i/progress_max
         left_half= '#' * int(percent * bar_length)
         right_half = ' ' * int((1-percent)*bar_length)
         sys.stdout.flush()
-        sys.stdout.write("\r\033[K"+left_half+right_half)
+        sys.stdout.write(f'\r\033[KDownloading image {i+1:03} of {len(recipe_array)}    {left_half}{right_half}')
         r.initialize()
     print()
 from recipe import *
@@ -20,7 +27,7 @@ class RecipeBuffer: #FINAlish implementation
         self.data = data
         self.buffer_size = buffer_size
         self.buffer_index = 0
-        # initialize_all(self.data)    SHOULD THIS GO HERE OR BELOW???
+        initialize_all(self.data)    #SHOULD THIS GO HERE OR BELOW???
     def current(self):
         output = []
         for i in range(self.buffer_size):
@@ -28,7 +35,7 @@ class RecipeBuffer: #FINAlish implementation
             if(index>=len(self.data)):
                 continue
             output.append(self.data[index])
-        initialize_all(output)       # SHOULD THIS GO HERE OR ABOVE???
+        # initialize_all(output)       # SHOULD THIS GO HERE OR ABOVE???
         return output
     def next(self):
         new_index = self.buffer_index+self.buffer_size

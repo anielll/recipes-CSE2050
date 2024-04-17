@@ -1,6 +1,7 @@
 from re import sub
 from urllib import request
 from PyQt5.QtGui import *
+from os import path, makedirs
 def time_in_minutes(time):
     temp = sub(r'[^HM\d]', '', time)
     if(temp == ""):
@@ -34,6 +35,19 @@ class Recipe:
         self.prep_time = prep_time
         self.ingredients = ingredients
         self.initialized = False
+
+    def set_image(self,url=None): 
+        self.image_filename = self.image_url.split("/")[-1]
+        if not path.exists("./images"):
+            makedirs("./images")
+        try:
+            image= request.urlopen(self.image_url).read()
+            if(path.exists("./images/"+self.image_filename)):
+                return
+            with open('./images/'+self.image_filename,'wb') as image_out:
+                image_out.write(image)
+        except Exception as e:
+            self.image_filename = None
     #seperate initialization function to avoid pre-processing everything
     def initialize(self):  
         if(self.initialized):
@@ -42,10 +56,9 @@ class Recipe:
         self.cook_time = minutes_in_hm(self.cook_time)
         self.prep_time = time_in_minutes(self.prep_time)
         self.prep_time = minutes_in_hm(self.prep_time)
-        try:
-            self.image = request.urlopen(self.image_url).read()
-        except: #TODO
-            self.image = None
+        self.set_image(self.image_url)
+        #above is equavelent to:
+        #self.image_url = "somepng.png"
         self.initialized = True
     def get_name(self):
         return self.name
@@ -55,7 +68,8 @@ class Recipe:
         return self.prep_time
     def get_recipe_yield(self):
         return self.recipe_yield
-    def set_image(self,url=None): #currently handled by RecipeBuffer TODO: ask professor about implementation details
-        pass
     def get_image(self):
-        return self.image
+        if(self.image_filename is None):
+            return None
+        else:
+            return "./images/"+self.image_filename
