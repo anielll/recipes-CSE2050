@@ -14,7 +14,7 @@ class RecipeUI(QDialog):
         self._width = 1600
         self._height = 900
 
-        self._search_bar = QLineEdit("Enter A Keyword To Be Searched (Please seperate different phrases by ',' :D)")
+        self._search_bar = QLineEdit("Enter A Keyword To Be Searched (Please separate different phrases by ',' :D)")
         self._search_bar.selectAll()
         self._search_bar.setFocus()
 
@@ -73,38 +73,50 @@ class RecipeUI(QDialog):
             recipe_image = recipe.get_image()
             if (index < 4):
                 if(recipe_image is None):
-                    self.grid.addWidget(QPushButton("IMAGE"), 1, 2 + (index*25), 20, 20)
+                    self.grid.addWidget(QPushButton("IMAGE"), 1, 2 + (index*25), 10, 20)
                 else:
                     image_label = QLabel()
                     image_pix = QPixmap(recipe_image)
                     if(image_pix.isNull()):
-                         self.grid.addWidget(QPushButton("IMAGE"), 1, 2 + (index*25), 20, 20)
+                         self.grid.addWidget(QPushButton("IMAGE"), 1, 2 + (index*25), 10, 20)
                     else:
                         image_pix = image_pix.scaled(300,300, Qt.KeepAspectRatio)
                         image_label.setPixmap(image_pix)
-                        self.grid.addWidget(image_label, 1, 2 + (index*25), 20, 20)
-                self.grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 2, 2 + (index*25), 21, 20)
-                self.grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 3, 2 + (index*25), 22, 20)
-                self.grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 4, 2 + (index*25), 23, 20)
-                self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 5, 2 + (index*25), 24, 20)
-                self.grid.addWidget(QPushButton("View Recipe"), 6, 12 + (index*25), 25, 10)
+                        self.grid.addWidget(image_label, 1, 2 + (index*25), 10, 20)
+                self.grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 22, 2 + (index*25), 1, 20)
+                recipe_name = recipe.get_name()
+                if (len(recipe_name) > 40):
+                    target_index = recipe_name[30:].find(" ") + 30
+                    recipe_string = f"Recipe Name: {recipe.get_name()[:target_index]}" + "\n" + f"{recipe.get_name()[target_index:]}"
+                    self.grid.addWidget(QLabel(recipe_string), 23, 2 + (index*25), 2, 20)
+                else:
+                    self.grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 23, 2 + (index*25), 2, 20)
+                self.grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 25, 2 + (index*25), 1, 20)
+                self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 26, 2 + (index*25), 1, 20)
+                self.grid.addWidget(QPushButton("View Recipe"), 27, 12 + (index*25), 1, 10)
             else:
                 if(recipe_image is None):
-                    self.grid.addWidget(QPushButton("IMAGE"), 7, 2 + ((index-4)*25), 60, 20)
+                    self.grid.addWidget(QPushButton("IMAGE"), 28, 2 + ((index-4)*25), 10, 20)
                 else:
                     image_label = QLabel()
                     image_pix = QPixmap(recipe_image)
                     if(image_pix.isNull()):
-                        self.grid.addWidget(QPushButton("IMAGE"), 7, 2 + ((index-4)*25), 60, 20)
+                        self.grid.addWidget(QPushButton("IMAGE"), 28, 2 + ((index-4)*25), 10, 20)
                     else:
                         image_pix = image_pix.scaled(300,300, Qt.KeepAspectRatio)
                         image_label.setPixmap(image_pix)
-                        self.grid.addWidget(image_label, 7, 2 + ((index-4)*25), 60, 20)
-                self.grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 8, 2 + ((index-4)*25), 61, 20)
-                self.grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 9, 2 + ((index-4)*25), 62, 20)
-                self.grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 10, 2 + ((index-4)*25), 63, 20)
-                self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 11, 2 + ((index-4)*25), 64, 20)
-                self.grid.addWidget(QPushButton("View Recipe"), 12, 12 + ((index-4)*25), 65, 10)
+                        self.grid.addWidget(image_label, 28, 2 + ((index-4)*25), 10, 20)
+                self.grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 42, 2 + ((index-4)*25), 1, 20)
+                recipe_name = recipe.get_name()
+                if (len(recipe_name) > 40):
+                    target_index = recipe_name[30:].find(" ") + 30
+                    recipe_string = f"Recipe Name: {recipe.get_name()[:target_index]}" + "\n" + f"{recipe.get_name()[target_index:]}"
+                    self.grid.addWidget(QLabel(recipe_string), 43, 2 + ((index-4)*25), 2, 20)
+                else:
+                    self.grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 43, 2 + ((index-4)*25), 2, 20)
+                self.grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 45, 2 + ((index-4)*25), 1, 20)
+                self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 46, 2 + ((index-4)*25), 1, 20)
+                self.grid.addWidget(QPushButton("View Recipe"), 47, 12 + ((index-4)*25), 1, 10)
 
         low_index = self._current_buffer.buffer_index + 1
         high_index = low_index + self._current_buffer.buffer_size -1
