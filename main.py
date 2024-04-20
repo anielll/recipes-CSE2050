@@ -6,8 +6,8 @@ from RecipeProcessor import RecipeProcessor
 from json import loads
 def main():
     RecipeLoader = RecipeProcessor
-    RecipeLoader.load__recipes
-    master_list = RecipeLoader.get__recipes
+    RecipeLoader.load__recipes('recipes.json')
+    master_list = RecipeLoader.get__recipes()
     app = QApplication(sys.argv)
     gui = RecipeUI(master_list)
     gui.show()
