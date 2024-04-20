@@ -1,7 +1,7 @@
 from re import sub
 from urllib import request
 from PyQt5.QtGui import *
-from os import path, makedirs
+from os import path, makedirs, remove
 def time_in_minutes(time):
     temp = sub(r'[^HM\d]', '', time)
     if(temp == ""):
@@ -34,32 +34,28 @@ class Recipe:
         self.cook_time = cook_time
         self.prep_time = prep_time
         self.ingredients = ingredients
-        self.initialized = False
-
-    def set_image(self,url=None): 
-        self.image_filename = self.image_url.split("/")[-1]
-        if not path.exists("./images"):
-            makedirs("./images")
-        try:
-            if(path.exists("./images/"+self.image_filename)):
-                return
-            with open('./images/'+self.image_filename,'wb') as image_out:
-                image= request.urlopen(self.image_url).read()
-                image_out.write(image)
-        except Exception as e:
-            self.image_filename = None
-    #seperate initialization function to avoid pre-processing everything
-    def initialize(self):  
-        if(self.initialized):
-            return
+        self.image_filename = "./images/"+image_url.split("/")[-1]
+        self.image_exists = path.exists(self.image_filename)
         self.cook_time = time_in_minutes(self.cook_time)
         self.cook_time = minutes_in_hm(self.cook_time)
         self.prep_time = time_in_minutes(self.prep_time)
         self.prep_time = minutes_in_hm(self.prep_time)
-        self.set_image(self.image_url)
-        #above is equavelent to:
-        #self.image_url = "somepng.png"
+        self.initialized = False
+    def set_image(self,url=None):
         self.initialized = True
+        if(self.image_exists):
+            return 
+        if(url is None):
+            url = self.image_url
+        try:
+            image= request.urlopen(url).read()
+        except Exception as e:
+            return
+        if not path.exists("./images"):
+            makedirs("./images")
+        with open(self.image_filename,'wb') as image_out:
+            image_out.write(image)
+        self.image_exists = True
     def get_name(self):
         return self.name
     def get_cook_time(self):
@@ -72,4 +68,4 @@ class Recipe:
         if(self.image_filename is None):
             return None
         else:
-            return "./images/"+self.image_filename
+            return self.image_filename

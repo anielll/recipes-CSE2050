@@ -1,28 +1,26 @@
 import sys
-import time
-# this function implements loading bar. while all recipe objects are "created" with recipe.__init__
-# the time-consuming initialization logic is moved to a seperate recipe.initialize function
-# which prevents doing unnecessary work for unused objects (and allows progress bar to be useful)
-# this function is just a prototype; TODO: implement correctly
 def initialize_all(recipe_array, bar_length = 50):
-    skip_init = True
+    missing_images = []
     for r in recipe_array:
-        if (not r.initialized):
-            skip_init = False
-            break
-    if(skip_init):
+        if(not r.image_exists and not r.initialized):
+            missing_images.append(r)
+    progress_max = len(missing_images)
+    if(progress_max==0):
         return
-    progress_max = len(recipe_array)
-    for i, r in enumerate(recipe_array):
+    for i, r in enumerate(missing_images):
         percent = i/progress_max
         left_half= '#' * int(percent * bar_length)
-        right_half = ' ' * int((1-percent)*bar_length)
+        right_half = '-' * int((1-percent)*bar_length)
         sys.stdout.flush()
-        sys.stdout.write(f'\r\033[KDownloading image {i+1:03} of {len(recipe_array)}    {left_half}{right_half}')
-        r.initialize()
-    print()
+        sys.stdout.write(f'\r\033[KDownloading image {i+1:03} of {progress_max}    {left_half}{right_half}')
+        r.set_image()
+    error_count = 0
+    for r in missing_images:
+        if(not r.image_exists):
+            error_count+=1
+    print(f'\nDNS Error - Failed to Download {error_count} Images: Website Does Not Exist')
 from recipe import *
-class RecipeBuffer: #FINAlish implementation
+class RecipeBuffer:
     def __init__(self,data, buffer_size):
         self.data = data
         self.buffer_size = buffer_size

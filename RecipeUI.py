@@ -33,7 +33,8 @@ class RecipeUI(QDialog):
         self._first_button.clicked.connect(self.first)
         self._last_button.clicked.connect(self.last)
         self._next_button.clicked.connect(self.next)
-        
+        self.setup_window()
+    def setup_window(self):        
         self.grid = QGridLayout()
         self.setLayout(self.grid)
         self.setGeometry(100, 100, self._width, self._height)
@@ -72,17 +73,14 @@ class RecipeUI(QDialog):
         for index, recipe in enumerate(recipes):
             recipe_image = recipe.get_image()
             if (index < 4):
-                if(recipe_image is None):
-                    self.grid.addWidget(QPushButton("IMAGE"), 1, 2 + (index*25), 10, 20)
+                image_label = QLabel()
+                image_pix = QPixmap(recipe_image)
+                if(image_pix.isNull()): # invalid file
+                    self.grid.addWidget(QPushButton("IMAGE NOT FOUND"), 1, 2 + (index*25), 10, 20)
                 else:
-                    image_label = QLabel()
-                    image_pix = QPixmap(recipe_image)
-                    if(image_pix.isNull()):
-                         self.grid.addWidget(QPushButton("IMAGE"), 1, 2 + (index*25), 10, 20)
-                    else:
-                        image_pix = image_pix.scaled(300,300, Qt.KeepAspectRatio)
-                        image_label.setPixmap(image_pix)
-                        self.grid.addWidget(image_label, 1, 2 + (index*25), 10, 20)
+                    image_pix = image_pix.scaled(300,300, Qt.KeepAspectRatio)
+                    image_label.setPixmap(image_pix)
+                    self.grid.addWidget(image_label, 1, 2 + (index*25), 10, 20)
                 self.grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 22, 2 + (index*25), 1, 20)
                 recipe_name = recipe.get_name()
                 if (len(recipe_name) > 40):
@@ -95,17 +93,14 @@ class RecipeUI(QDialog):
                 self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 26, 2 + (index*25), 1, 20)
                 self.grid.addWidget(QPushButton("View Recipe"), 27, 12 + (index*25), 1, 10)
             else:
-                if(recipe_image is None):
-                    self.grid.addWidget(QPushButton("IMAGE"), 28, 2 + ((index-4)*25), 10, 20)
+                image_label = QLabel()
+                image_pix = QPixmap(recipe_image)
+                if(image_pix.isNull()): # invalid file
+                    self.grid.addWidget(QPushButton("IMAGE NOT FOUND"), 28, 2 + ((index-4)*25), 10, 20)
                 else:
-                    image_label = QLabel()
-                    image_pix = QPixmap(recipe_image)
-                    if(image_pix.isNull()):
-                        self.grid.addWidget(QPushButton("IMAGE"), 28, 2 + ((index-4)*25), 10, 20)
-                    else:
-                        image_pix = image_pix.scaled(300,300, Qt.KeepAspectRatio)
-                        image_label.setPixmap(image_pix)
-                        self.grid.addWidget(image_label, 28, 2 + ((index-4)*25), 10, 20)
+                    image_pix = image_pix.scaled(300,300, Qt.KeepAspectRatio)
+                    image_label.setPixmap(image_pix)
+                    self.grid.addWidget(image_label, 28, 2 + ((index-4)*25), 10, 20)
                 self.grid.addWidget(QLabel(f"Recipe #: {self._current_buffer.buffer_index+index + 1}"), 42, 2 + ((index-4)*25), 1, 20)
                 recipe_name = recipe.get_name()
                 if (len(recipe_name) > 40):
