@@ -64,6 +64,10 @@ class Recipe:
         return self.prep_time
     def get_recipe_yield(self):
         return self.recipe_yield
+    def get_description(self):
+        return self.description
+    def get_ingredients(self):
+        return self.ingredients
     def get_image(self):
         if(self.image_filename is None):
             return None

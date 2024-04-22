@@ -3,12 +3,13 @@ from recipebuffer import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QDialog, QGridLayout, QLineEdit, QPushButton, QWidget, QLineEdit, QLabel
-
+from RecipeDetails import *
 
 class RecipeUI(QDialog):
 
     def __init__(self, recipe_list_master):
         super(RecipeUI, self).__init__()
+        self._detail_window = None
         self._master_buffer = RecipeBuffer(recipe_list_master,8)
         self._current_buffer = self._master_buffer
         self._width = 1600
@@ -42,6 +43,7 @@ class RecipeUI(QDialog):
         self.layout_ui(self._master_buffer.current())
 
     def layout_ui(self, recipes):
+        self.buttons =[]
         items = [self.grid.itemAt(i) for i in range(self.grid.count())]
         for item in items:
             self.grid.removeWidget(item.widget())
@@ -91,7 +93,9 @@ class RecipeUI(QDialog):
                     self.grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 23, 2 + (index*25), 2, 20)
                 self.grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 25, 2 + (index*25), 1, 20)
                 self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 26, 2 + (index*25), 1, 20)
-                self.grid.addWidget(QPushButton("View Recipe"), 27, 12 + (index*25), 1, 10)
+                view_button = QPushButton("View Recipe")
+                self.buttons.append(view_button)
+                self.grid.addWidget(view_button, 27, 12 + (index*25), 1, 10)
             else:
                 image_label = QLabel()
                 image_pix = QPixmap(recipe_image)
@@ -111,14 +115,24 @@ class RecipeUI(QDialog):
                     self.grid.addWidget(QLabel(f"Recipe Name: {recipe.get_name()}"), 43, 2 + ((index-4)*25), 2, 20)
                 self.grid.addWidget(QLabel(f"Prep Time: {recipe.get_prep_time()}"), 45, 2 + ((index-4)*25), 1, 20)
                 self.grid.addWidget(QLabel(f"Cook Time: {recipe.get_cook_time()}"), 46, 2 + ((index-4)*25), 1, 20)
-                self.grid.addWidget(QPushButton("View Recipe"), 47, 12 + ((index-4)*25), 1, 10)
+                view_button = QPushButton("View Recipe")
+                self.buttons.append(view_button)
+                self.grid.addWidget(view_button, 47, 12 + ((index-4)*25), 1, 10)
 
         low_index = self._current_buffer.buffer_index + 1
         high_index = low_index + self._current_buffer.buffer_size -1
         high_index = min(high_index, len(self._master_buffer.data))
 
         self.grid.addWidget(QLabel(f"Displaying {low_index}-{high_index} of {len(self._current_buffer.data)} Recipes"), 100, 0, 1, 10)
-
+        # i tried to do this in the main loop but lambda functions are not dynamic 
+        self.buttons[0].clicked.connect(lambda: self.view(recipes[0],self._current_buffer.buffer_index+1))
+        self.buttons[1].clicked.connect(lambda: self.view(recipes[1],self._current_buffer.buffer_index+2))
+        self.buttons[2].clicked.connect(lambda: self.view(recipes[2],self._current_buffer.buffer_index+3))
+        self.buttons[3].clicked.connect(lambda: self.view(recipes[3],self._current_buffer.buffer_index+4))
+        self.buttons[4].clicked.connect(lambda: self.view(recipes[4],self._current_buffer.buffer_index+5))
+        self.buttons[5].clicked.connect(lambda: self.view(recipes[5],self._current_buffer.buffer_index+6))
+        self.buttons[6].clicked.connect(lambda: self.view(recipes[6],self._current_buffer.buffer_index+7))
+        self.buttons[7].clicked.connect(lambda: self.view(recipes[7],self._current_buffer.buffer_index+8))                        
     def search(self):
         bar_text = self._search_bar.text()
 
@@ -155,3 +169,6 @@ class RecipeUI(QDialog):
         self._current_buffer = self._master_buffer
         self.layout_ui(self._current_buffer.first())
 
+    def view(self, recipe, index):
+        self._detail_window = DetailWindow(recipe,index)
+        self._detail_window.show()

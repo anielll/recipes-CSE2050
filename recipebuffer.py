@@ -18,7 +18,8 @@ def initialize_all(recipe_array, bar_length = 50):
     for r in missing_images:
         if(not r.image_exists):
             error_count+=1
-    print(f'\nDNS Error - Failed to Download {error_count} Images: Website Does Not Exist')
+    if(error_count>0):
+        print(f'\nDNS Error - Failed to Download {error_count} Images: Website Does Not Exist')
 from recipe import *
 class RecipeBuffer:
     def __init__(self,data, buffer_size):
