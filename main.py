@@ -1,9 +1,7 @@
 import sys
-from RecipeUI import RecipeUI
+from recipe_ui import RecipeUI
 from PyQt5.QtWidgets import QApplication
-from recipe import Recipe
-from RecipeProcessor import RecipeProcessor
-from json import loads
+from recipe_processor import RecipeProcessor
 def main():
     RecipeLoader = RecipeProcessor
     RecipeLoader.load__recipes('recipes.json')

@@ -1,7 +1,7 @@
 from re import sub
 from urllib import request
-from PyQt5.QtGui import *
-from os import path, makedirs, remove
+from os import path, makedirs
+# parse string to int
 def time_in_minutes(time):
     temp = sub(r'[^HM\d]', '', time)
     if(temp == ""):
@@ -20,6 +20,7 @@ def time_in_minutes(time):
     temp = int(temp[0])
     total_minutes+= temp
     return total_minutes
+#parse into to fstring
 def minutes_in_hm(minutes):
     if(minutes is None):
         return ""
@@ -41,6 +42,7 @@ class Recipe:
         self.prep_time = time_in_minutes(self.prep_time)
         self.prep_time = minutes_in_hm(self.prep_time)
         self.initialized = False
+    #download image
     def set_image(self,url=None):
         self.initialized = True
         if(self.image_exists):
